@@ -1,39 +1,35 @@
-# LeetCode [49. Group Anagrams](https://leetcode.com/problems/group-anagrams/description/)
+# LeetCode 49. Group Anagrams
 
 ---
 
 ## 1. Problem Description
 
 ### Description:
-Given an array of strings `strs`, group the anagrams together. Anagrams are strings that contain the same characters in any order.
+Given an array of strings, group anagrams together.
 
 ---
 
 ### Input:
-- `strs`: A list of lowercase strings.
+- A list of strings `strs` where 0 <= len(strs) <= 10^4 and 0 <= len(strs[i]) <= 100.
 
 ---
 
 ### Output:
-- A list of lists, where each sublist contains strings that are anagrams of each other.
+- A list of groups of anagrams.
 
 ---
 
 ### Example(s):
 **Example 1:**
 ```
-
 Input: strs = ["eat","tea","tan","ate","nat","bat"]
 Output: [["eat","tea","ate"],["tan","nat"],["bat"]]
-
 ```
 
 **Example 2:**
 ```
-
 Input: strs = [""]
 Output: [[""]]
-
 ```
 
 ---
@@ -43,20 +39,14 @@ Output: [[""]]
 
 **Test Case 1:**
 ```
-
-Input: strs = ["abc","bca","cab","xyz","zyx","yxz"]
-Output: [["abc","bca","cab"],["xyz","zyx","yxz"]]
-Explanation: Strings grouped by identical character counts.
-
+Input: strs = ["a"]
+Output: [["a"]]
 ```
 
 **Test Case 2:**
 ```
-
-Input: strs = ["a"]
-Output: [["a"]]
-Explanation: Single string forms one group.
-
+Input: strs = ["rat","tar","art"]
+Output: [["rat","tar","art"]]
 ```
 
 </details>
@@ -65,23 +55,21 @@ Explanation: Single string forms one group.
 
 ## 2. Approach
 
-To group anagrams efficiently, the algorithm relies on the fact that anagrams share the same frequency of each character.
+We use a dictionary to store the signature of each string where the signature is a tuple of the counts of each character in the string. If two strings have the same signature, they are anagrams. We iterate through each string, create its signature, and check if we have seen that signature before.
 
-Instead of sorting each string (which can be costly), this solution creates a fixed-size character count signature for each string, representing how many times each letter appears.
-
-- For each string, build an array representing counts of each alphabet letter.
-- Convert this count array into a tuple (hashable) to serve as a unique key.
-- Use a dictionary to map each unique signature to a list of strings matching that pattern.
-- Append each string to the correct group based on its signature.
-- Finally, return all grouped anagram lists.
-
-This approach avoids the overhead of sorting strings and leverages constant-time dictionary lookups for grouping, resulting in an efficient solution.
+1. Initialize an empty dictionary `seen_dict` to store signatures and their corresponding index in result list.
+2. Initialize an empty list `res` to store groups of anagrams.
+3. Initialize `res_index` to keep track of the index in result list.
+4. Iterate through each string in the input list:
+   - Create a signature by counting the occurrences of each character in the string.
+   - Convert the signature to a tuple for hashability.
+   - If the signature is seen before, add the string to the corresponding group in the result list.
+   - Else, store the signature in `seen_dict` with its index in the result list and create a new group in the result list.
+5. Return the list of groups of anagrams.
 
 ---
 
 ## 3. Algorithm Complexity
 
-- **Time Complexity:** O(n * k), where n is the number of strings and k is the maximum string length. Counting characters is O(k) per string.
-- **Space Complexity:** O(n * k), to store the grouped anagrams and the frequency signatures.
-
----
+- **Time Complexity:** O(N * K) where N is the number of strings in the input list and K is the maximum length of a string in the list.
+- **Space Complexity:** O(N * K) for the dictionary and the result list.
