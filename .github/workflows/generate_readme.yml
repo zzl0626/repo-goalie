@@ -14,5 +14,5 @@ jobs:
     with:
       problem_id: ${{ github.event.inputs.problem_id }}
     secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAT_GITHUB: ${{ secrets.PAT_GITHUB }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
