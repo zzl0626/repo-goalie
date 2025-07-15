@@ -9,7 +9,7 @@ app = typer.Typer()
 @app.command()
 
 def find_problem_folder(problem_id: str) -> str:
-    problems_dir = os.path.join(os.getcwd(), "test", "problems")
+    problems_dir = os.path.join(os.getcwd(), "problems")
     for difficulty in os.listdir(problems_dir):
         difficulty_path = os.path.join(problems_dir, difficulty)
         if os.path.isdir(difficulty_path):
