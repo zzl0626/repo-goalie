@@ -10,7 +10,7 @@ on:
         required: true
         type: string
     secrets:
-      GITHUB_TOKEN:
+      PAT_GITHUB:
         required: true
       OPENAI_API_KEY:
         required: true
@@ -29,7 +29,6 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
           echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> $GITHUB_ENV
 
       - name: Install uv
@@ -39,7 +38,7 @@ jobs:
         run: uv sync
 
       - name: Install Goalie
-        run: uv tool install git+https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/zzl0626/repo-goalie
+        run: uv tool install git+https://x-access-token:${{ secrets.PAT_GITHUB }}@github.com/zzl0626/repo-goalie
 
       - name: Generate README with Goalie
         run: |
@@ -58,7 +57,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT_GITHUB }}
           branch: goalie/readme-${{ inputs.problem_id }}
           title: "Add README for problem ${{ inputs.problem_id }}"
           body: "This PR adds a generated README for problem ${{ inputs.problem_id }} using Goalie."
