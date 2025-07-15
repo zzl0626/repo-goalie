@@ -216,7 +216,7 @@ This approach ensures the substring always requires at most `k` replacements to 
 def call_openai_api(openai_key: str, prompt: str) -> str:
     client = openai.OpenAI(api_key=openai_key)
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="o4-mini",
         messages=[{"role": "user", "content": prompt}]
     )
     message = response.choices[0].message.content if response.choices and hasattr(response.choices[0].message, 'content') else None
