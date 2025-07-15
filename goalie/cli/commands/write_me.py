@@ -29,7 +29,7 @@ def write_me(
 
     # Use test/problems/<difficulty>/<problem_id> as the problem folder
     # Search for the problem_id folder inside all subfolders of test/problems
-    problems_dir = os.path.join(os.getcwd(), "problems")
+    problems_dir = os.path.join(os.getcwd(), "test", "problems")
     problem_folder = None
     for difficulty in os.listdir(problems_dir):
         difficulty_path = os.path.join(problems_dir, difficulty)
