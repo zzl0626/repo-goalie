@@ -46,6 +46,8 @@ jobs:
           goalie write-me --id "${{ inputs.problem_id }}"
 
       - name: Create new branch and commit README
+        env:
+          PAT_GITHUB: ${{ secrets.PAT_GITHUB }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -53,6 +55,7 @@ jobs:
           git checkout -b "$branch"
           git add test/problems/**/${{ inputs.problem_id }}-*/README.md
           git commit -m "Add README for problem ${{ inputs.problem_id }}"
+          git remote set-url origin https://x-access-token:${PAT_GITHUB}@github.com/${GITHUB_REPOSITORY}.git
           git push origin "$branch"
 
       - name: Create Pull Request
