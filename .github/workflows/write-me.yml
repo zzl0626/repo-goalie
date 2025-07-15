@@ -60,10 +60,11 @@ jobs:
           git push origin "$branch"
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.PAT_GITHUB }}
-          branch: goalie/readme-${{ inputs.problem_id }}
-          base: main
-          title: "Add README for problem ${{ inputs.problem_id }}"
-          body: "This PR adds a generated README for problem ${{ inputs.problem_id }} using Goalie."
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
+        run: |
+          gh pr create \
+            --head "goalie/readme-${{ inputs.problem_id }}" \
+            --base main \
+            --title "Add README for problem ${{ inputs.problem_id }}" \
+            --body "This PR adds a generated README for problem ${{ inputs.problem_id }} using Goalie."
