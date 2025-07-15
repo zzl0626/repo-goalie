@@ -3,6 +3,7 @@ import logging
 from goalie.cli.commands import greet, farewell
 from goalie.cli.commands.ask_ai import ask_ai
 from goalie.cli.commands.analyse_code import analyse_code
+from goalie.cli.commands.write_me import write_me
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("goalie.main")
@@ -13,6 +14,7 @@ app.command(name="greet")(greet)
 app.command(name="farewell")(farewell)
 app.command(name="ask-ai")(ask_ai)
 app.command(name="analyse-code")(analyse_code)
+app.command(name="write-me")(write_me)
 
 
 def main():

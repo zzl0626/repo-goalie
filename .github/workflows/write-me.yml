@@ -1,0 +1,64 @@
+name: Generate README with Goalie
+
+description: |
+  Reusable workflow to generate a README for a coding problem using the goalie write-me command, then create a branch and pull request.
+
+on:
+  workflow_call:
+    inputs:
+      problem_id:
+        required: true
+        type: string
+    secrets:
+      GITHUB_TOKEN:
+        required: true
+      OPENAI_API_KEY:
+        required: true
+
+jobs:
+  generate-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Set environment variables
+        run: |
+          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> $GITHUB_ENV
+
+      - name: Install uv
+        run: curl -Ls https://astral.sh/uv/install.sh | sh
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Install Goalie
+        run: uv tool install git+https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/zzl0626/repo-goalie
+
+      - name: Generate README with Goalie
+        run: |
+          goalie write-me --id "${{ inputs.problem_id }}"
+
+      - name: Create new branch and commit README
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          branch="goalie/readme-${{ inputs.problem_id }}"
+          git checkout -b "$branch"
+          git add test/problems/**/${{ inputs.problem_id }}-*/README.md
+          git commit -m "Add README for problem ${{ inputs.problem_id }}"
+          git push origin "$branch"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: goalie/readme-${{ inputs.problem_id }}
+          title: "Add README for problem ${{ inputs.problem_id }}"
+          body: "This PR adds a generated README for problem ${{ inputs.problem_id }} using Goalie."

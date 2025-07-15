@@ -1,0 +1,18 @@
+name: Call Goalie Write-Me
+
+on:
+  workflow_dispatch:
+    inputs:
+      problem_id:
+        description: 'Problem ID'
+        required: true
+        type: string
+
+jobs:
+  call-goalie:
+    uses: zzl0626/repo-goalie/.github/workflows/write-me.yml@main
+    with:
+      problem_id: ${{ github.event.inputs.problem_id }}
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
