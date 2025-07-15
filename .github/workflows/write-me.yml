@@ -48,9 +48,10 @@ jobs:
       - name: Create new branch and commit README
         env:
           PAT_GITHUB: ${{ secrets.PAT_GITHUB }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
-          git config user.name "zzl0626"
-          git config user.email "zhenlinzhang15@gmail.com"
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
           branch="goalie/readme-${{ inputs.problem_id }}"
           git checkout -b "$branch"
           git add test/problems/**/${{ inputs.problem_id }}-*/README.md
