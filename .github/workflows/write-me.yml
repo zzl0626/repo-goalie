@@ -54,7 +54,7 @@ jobs:
           git config user.email "actions@github.com"
           branch="goalie/readme-${{ inputs.problem_id }}"
           git checkout -b "$branch"
-          git add test/problems/**/${{ inputs.problem_id }}-*/README.md
+          git add problems/**/${{ inputs.problem_id }}-*/README.md
           git commit -m "Add README for problem ${{ inputs.problem_id }}"
           git remote set-url origin https://x-access-token:${PAT_GITHUB}@github.com/${GITHUB_REPOSITORY}.git
           git push origin "$branch"
