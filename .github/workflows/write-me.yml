@@ -64,5 +64,6 @@ jobs:
         with:
           token: ${{ secrets.PAT_GITHUB }}
           branch: goalie/readme-${{ inputs.problem_id }}
+          base: main
           title: "Add README for problem ${{ inputs.problem_id }}"
           body: "This PR adds a generated README for problem ${{ inputs.problem_id }} using Goalie."
