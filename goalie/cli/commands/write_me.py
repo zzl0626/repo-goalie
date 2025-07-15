@@ -7,58 +7,31 @@ from goalie.github.github import GitHubClient
 app = typer.Typer()
 
 @app.command()
-def write_me(
-    problem_id: str = typer.Option(
-        ...,
-        "--id",
-        help="The problem ID to write a README for"
-    )
-):
-    """
-    Generate a README for a new problem folder and optionally create a pull request.
-    """
-    load_dotenv()
-    github_token = os.getenv("GITHUB_TOKEN")
-    openai_key = os.getenv("OPENAI_API_KEY")
-    if not github_token:
-        typer.echo("Error: GITHUB_TOKEN not set in environment.")
-        raise typer.Exit(1)
-    if not openai_key:
-        typer.echo("Error: OPENAI_API_KEY not set in environment.")
-        raise typer.Exit(1)
 
-    # Use test/problems/<difficulty>/<problem_id> as the problem folder
-    # Search for the problem_id folder inside all subfolders of test/problems
+def find_problem_folder(problem_id: str) -> str:
     problems_dir = os.path.join(os.getcwd(), "test", "problems")
-    problem_folder = None
     for difficulty in os.listdir(problems_dir):
         difficulty_path = os.path.join(problems_dir, difficulty)
         if os.path.isdir(difficulty_path):
             for folder in os.listdir(difficulty_path):
                 if os.path.isdir(os.path.join(difficulty_path, folder)) and folder.startswith(f"{problem_id}-"):
-                    problem_folder = os.path.join(difficulty_path, folder)
-                    break
-        if problem_folder:
-            break
-    if not problem_folder:
-        typer.echo(f"Problem folder not found for id '{problem_id}' in any difficulty folder under {problems_dir}")
-        raise typer.Exit(1)
+                    return os.path.join(difficulty_path, folder)
+    typer.echo(f"Problem folder not found for id '{problem_id}' in any difficulty folder under {problems_dir}")
+    raise typer.Exit(1)
 
-    # Find the main code file in the problem folder (e.g., .py file)
-    code_file = None
+def find_code_file(problem_folder: str) -> str:
     for f in os.listdir(problem_folder):
         if f.endswith(".py"):
-            code_file = os.path.join(problem_folder, f)
-            break
-    if not code_file:
-        typer.echo(f"No code file found in {problem_folder}")
-        raise typer.Exit(1)
+            return os.path.join(problem_folder, f)
+    typer.echo(f"No code file found in {problem_folder}")
+    raise typer.Exit(1)
 
+def read_code(code_file: str) -> str:
     with open(code_file, "r", encoding="utf-8") as f:
-        code = f.read()
+        return f.read()
 
-    # Generate README content using OpenAI
-    prompt = f"""
+def build_prompt(problem_id: str, code: str) -> str:
+    return f"""
 Write a README for a coding problem named '{problem_id}'. Here is the solution code:\n\n{code}\n\nInclude a problem description, approach, and usage instructions.
 Follow this format:
 
@@ -145,6 +118,8 @@ Explanation: *(Optional)*
 
 ---
 """
+
+def call_openai_api(openai_key: str, prompt: str) -> str:
     client = openai.OpenAI(api_key=openai_key)
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
@@ -154,7 +129,39 @@ Explanation: *(Optional)*
     if not message:
         typer.echo("No response from AI model.")
         raise typer.Exit(1)
+    return message.strip()
+
+def write_readme(problem_folder: str, content: str):
     readme_path = os.path.join(problem_folder, "README.md")
     with open(readme_path, "w", encoding="utf-8") as f:
-        f.write(message.strip())
+        f.write(content)
     typer.echo(f"README.md generated at {readme_path}")
+
+
+def get_env_var(var_name: str) -> str:
+    value = os.getenv(var_name)
+    if not value:
+        typer.echo(f"Error: {var_name} not set in environment.")
+        raise typer.Exit(1)
+    return value
+
+@app.command()
+def write_me(
+    problem_id: str = typer.Option(
+        ...,
+        "--id",
+        help="The problem ID to write a README for"
+    )
+):
+    """
+    Generate a README for a new problem folder and optionally create a pull request.
+    """
+    load_dotenv()
+    github_token = get_env_var("GITHUB_TOKEN")
+    openai_key = get_env_var("OPENAI_API_KEY")
+    problem_folder = find_problem_folder(problem_id)
+    code_file = find_code_file(problem_folder)
+    code = read_code(code_file)
+    prompt = build_prompt(problem_id, code)
+    readme_content = call_openai_api(openai_key, prompt)
+    write_readme(problem_folder, readme_content)
