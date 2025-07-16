@@ -85,7 +85,7 @@ jobs:
   call-goalie:
     uses: zzl0626/repo-goalie/.github/workflows/write-me.yml@main
     with:
-      problem_id: "49"
+      problem_id: ${{ github.event.inputs.problem_id }}
     secrets:
       PAT_GITHUB: ${{ secrets.PAT_GITHUB }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
