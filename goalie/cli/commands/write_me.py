@@ -32,7 +32,7 @@ def read_code(code_file: str) -> str:
 
 def build_prompt(problem_id: str, code: str) -> str:
     return f"""
-Write a README for a coding problem named '{problem_id}'. Here is the solution code:\n\n{code}\n\nInclude a problem description, approach, and usage instructions.
+Write a README for a coding problem named '{problem_id}'. Here is the solution code:\n\n{code}\n\nInclude a problem description and approach
 Follow this format:
 
 # LeetCode [[Question Number]. [Question Title]](link)
